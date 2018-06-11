@@ -8,7 +8,7 @@ class ReseultsUploader:
 
     def __init__(self):
         """clase que sube los resultados encuesta DANE en nuestra DB"""
-        with open('config/dbconfig.json', 'r') as f:
+        with open('src/config/dbconfig.json', 'r') as f:
             config = json.load(f)
             dburl = config['DEV']['DBURL']
             dbport = int(config['DEV']['DBPORT'])
