@@ -2,8 +2,9 @@ from pymongo import MongoClient
 import json
 import csv
 
-BILLION = 1000000000
-TIPOLO = {"RD1": 1, "RD2": 2, "RD3": 3, "RD4": 4}
+ACTIVITY = 7210
+TIPOLO = {"AC_1_7210": 1, "AC_2_7210": 2, "AC_3_7210": 3, "AC_4_7210": 4}
+
 
 class Exporter:
 
@@ -30,7 +31,7 @@ class Exporter:
             try:
 
                 findex = dict()
-                findex['ciiu_' + str(value)] = {"$regex": ".*7210.*"}
+                findex['ciiu_' + str(value)] = ACTIVITY
                 print(findex)
 
                 filename = 'ccb_selection_' + key + '.csv'

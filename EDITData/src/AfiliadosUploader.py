@@ -38,6 +38,13 @@ class AfiliadosUploader:
         else:
             return True
 
+    def getCIIU(self, description):
+        try:
+            val = float(description.split()[0])
+            return val
+        except IndexError:
+            return 0
+
     def uploarResultfromCSV(self, csvfile):
 
         batch_data = []
@@ -51,18 +58,22 @@ class AfiliadosUploader:
                 self.labels.append(converted)
             print(self.labels)
 
+            ciiu_pos = [i for i, x in enumerate(self.labels) if "ciiu" in x]
+            print(ciiu_pos)
+
             for row in reader:
                 i=0
                 data = {}
                 for item in row:
                     if item.isdigit():
-                        data[ self.labels[i]] = int(item)
+                        data[self.labels[i]] = int(item)
                     elif self.isfloat(item):
-                        data[ self.labels[i]] = float(item)
+                        data[self.labels[i]] = float(item)
+                    elif i in ciiu_pos:
+                        data[self.labels[i]] = self.getCIIU(item)
                     else:
                         data[ self.labels[i]] = item
                     i += 1
-
 
                 obj_id = self.collection.insert_one(data)
                 logging.info('Total data read \t' + str(obj_id) + '\t' + str(counter))
