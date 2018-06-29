@@ -19,6 +19,9 @@ input_files_inno.append(path + "selection_AMPLIA.csv")
 input_files_inno.append(path + "selection_POTENC.csv")
 input_files_inno.append(path + "selection_ESTRIC.csv")
 
+input_files_amplia = []
+input_files_amplia.append(path + "selection_AMPLIA.csv")
+
 
 class Scatters:
     def __init__(self):
@@ -130,7 +133,18 @@ class Scatters:
 
             for file in self.input_files:
 
-                data = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
+                inversion_acti = []
+                obstaculos_acti = []
+                importancia_acti = []
+                obstaculos_nulos_acti = []
+                importancia_nulos__acti = []
+
+                for idx in range(0,20):
+                    inversion_acti.append(0.0)
+                    obstaculos_acti.append(0.0)
+                    importancia_acti.append(0.0)
+                    obstaculos_nulos_acti.append(0.0)
+                    importancia_nulos__acti.append(0.0)
 
                 with open(file, 'r', encoding='utf-8') as f:
                     reader = csv.reader(f, dialect="excel-tab")
@@ -145,16 +159,76 @@ class Scatters:
 
                     for row in reader:
                         total_invertido_2016 += float(row[62])
+                        for idx in range(0, 9):
+                            inversion_acti[idx] += float(row[idx+53])
 
-                    color_index += 1
-                    plt.scatter(xx, yy, s=area, c=color, alpha=0.6, label=labels[row[1]])
+                        for idx in range(0,13):
+                            if row[idx+39] == '1':
+                                obstaculos_acti[idx] += 1.0
+                            elif row[idx+39] == '3':
+                                obstaculos_nulos_acti[idx] += 1.0
+
+                        for idx in range(0, 14):
+                            if row[idx+22] == '1':
+                                importancia_acti[idx] += 1.0
+                            elif row[idx+22] == '3':
+                                importancia_nulos__acti[idx] += 1.0
+
+                    #... color_index += 1
+                    #... plt.scatter(xx, yy, s=area, c=color, alpha=0.6, label=labels[row[1]])
                     print(str(total_invertido_2016/BILLON))
+                    for idx in range(0, 9):
+                        info = "* " + totales_inversion_ACTI[idx+53] + '\t' + str(inversion_acti[idx])
+                        print(info)
+
+                    print("")
+                    print("")
+
+                    for idx in range(0, 13):
+                        info = "** " + obstaculos[idx+39] + '\t' + str(obstaculos_acti[idx]) + '\t' + str(obstaculos_nulos_acti[idx])
+                        print(info)
+
+                    print("")
+                    print("")
+
+                    for idx in range(0, 14):
+                        info = "*** " + importancia_innovaciones[idx+22] + '\t' + str(importancia_acti[idx]) + '\t' + str(importancia_nulos__acti[ idx ])
+                        print(info)
 
         except IOError as ex:
             print(ex)
 
 
-anal = 1
+    def getAnalysisThree(self):
+        try:
+
+            for file in self.input_files:
+                with open(file, 'r', encoding='utf-8') as f:
+                    reader = csv.reader(f, dialect="excel-tab")
+                    next(reader, None)
+
+                    for row in reader:
+
+                        # ... Motivacion
+                        criteria_1 = int(row[27])
+                        criteria_2 = int(row[22])
+                        criteria_3 = int(row[26])
+
+                        # ... Obstaculos
+                        criteria_4 = int(row[47])
+                        criteria_5 = int(row[40])
+                        criteria_6 = int(row[45])
+
+                        sum_all = criteria_1 + criteria_2 + criteria_3 + criteria_4 + criteria_5 + criteria_6
+
+                        if sum_all == 6:
+                            print(row[0])
+
+        except IOError as ex:
+            print(ex)
+
+
+anal = 3
 
 if anal == 1:
     plots = Scatters()
@@ -174,11 +248,18 @@ elif anal == 2:
     plots.setInputFiles(input_files_inno)
     plots.setVariables([""])
     plots.getAnalysisTwo()
-    plt.xlabel('Nivel de calificación')
-    plt.ylabel('Nivel de inversión en ACTI')
-    plt.xlim(0, 11)
-    plt.ylim(0, 11)
-    plt.legend()
-    plt.grid(True)
-    plt.show()
+    #... plt.xlabel('Nivel de calificación')
+    #... plt.ylabel('Nivel de inversión en ACTI')
+    #... plt.xlim(0, 11)
+    #... plt.ylim(0, 11)
+    #... plt.legend()
+    #... plt.grid(True)
+    #... plt.show()
+
+elif anal == 3:
+    print("Analisis 3")
+    plots = Scatters()
+    plots.setInputFiles(input_files_amplia)
+    plots.setVariables([""])
+    plots.getAnalysisThree()
 
